@@ -1,0 +1,1 @@
+globalThis.__RSC_MANIFEST=(globalThis.__RSC_MANIFEST||{});globalThis.__RSC_MANIFEST["/api/bucket_configs/route"]={"moduleLoading":{"prefix":"/_next/"},"ssrModuleMapping":{},"edgeSSRModuleMapping":{},"clientModules":{},"entryCSSFiles":{"D:\\IT\\mid_developer\\pro-react\\src\\app\\api\\bucket_configs\\route":[]},"rscModuleMapping":{},"edgeRscModuleMapping":{}};

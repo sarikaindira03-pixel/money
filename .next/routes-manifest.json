@@ -1,0 +1,151 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [
+      {
+        "source": "/api/proxy/:path*",
+        "destination": "http://localhost:8081/rest/v1/:path*",
+        "regex": "^/api/proxy(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+      }
+    ],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/api/ledger/[id]",
+      "regex": "^/api/ledger/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/ledger/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/paychecks/[month]/monthly_entries",
+      "regex": "^/api/paychecks/([^/]+?)/monthly_entries(?:/)?$",
+      "routeKeys": {
+        "nxtPmonth": "nxtPmonth"
+      },
+      "namedRegex": "^/api/paychecks/(?<nxtPmonth>[^/]+?)/monthly_entries(?:/)?$"
+    },
+    {
+      "page": "/month/[year]",
+      "regex": "^/month/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPyear": "nxtPyear"
+      },
+      "namedRegex": "^/month/(?<nxtPyear>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/month/[year]/[bucketId]",
+      "regex": "^/month/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPyear": "nxtPyear",
+        "nxtPbucketId": "nxtPbucketId"
+      },
+      "namedRegex": "^/month/(?<nxtPyear>[^/]+?)/(?<nxtPbucketId>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/api/bucket_configs",
+      "regex": "^/api/bucket_configs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/bucket_configs(?:/)?$"
+    },
+    {
+      "page": "/api/budget/allocate",
+      "regex": "^/api/budget/allocate(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/budget/allocate(?:/)?$"
+    },
+    {
+      "page": "/api/ledger",
+      "regex": "^/api/ledger(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/ledger(?:/)?$"
+    },
+    {
+      "page": "/api/locker",
+      "regex": "^/api/locker(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/locker(?:/)?$"
+    },
+    {
+      "page": "/api/paychecks",
+      "regex": "^/api/paychecks(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/paychecks(?:/)?$"
+    },
+    {
+      "page": "/api/vault/blue-treasure",
+      "regex": "^/api/vault/blue\\-treasure(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/vault/blue\\-treasure(?:/)?$"
+    },
+    {
+      "page": "/auth/callback",
+      "regex": "^/auth/callback(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/callback(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
