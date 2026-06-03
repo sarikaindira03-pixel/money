@@ -32,3 +32,5 @@ build
 .env
 .env.local
 .env.production
+.env.dev
+.env*
