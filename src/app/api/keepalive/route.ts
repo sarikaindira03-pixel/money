@@ -2,9 +2,16 @@ export const runtime = "edge";
 
 export async function GET(req: Request) {
   const token = new URL(req.url).searchParams.get("token");
-
-  if (token !== process.env.KEEPALIVE_SECRET!) {
+  if (token?.trim() !== process.env.KEEPALIVE_SECRET?.trim()) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Guard against missing env vars
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
+    return Response.json({ error: "Missing env vars" }, { status: 500 });
   }
 
   try {
@@ -12,19 +19,26 @@ export async function GET(req: Request) {
       `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`,
       {
         headers: {
-          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
         },
       },
     );
 
-    if (!response.ok) throw new Error(`Supabase response: ${response.status}`);
+    if (!response.ok) {
+      return Response.json(
+        { error: `Supabase error: ${response.status}` },
+        { status: 502 },
+      );
+    }
 
     return Response.json({
       success: true,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Keepalive failed:", error);
-    return Response.json({ error: "Keepalive ping failed" }, { status: 500 });
+    return Response.json(
+      { error: "Keepalive ping failed", detail: String(error) },
+      { status: 500 },
+    );
   }
 }
