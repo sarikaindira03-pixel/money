@@ -1,17 +1,10 @@
 export const runtime = "edge";
 
 export async function GET(req: Request) {
-  const token = new URL(req.url).searchParams.get("token");
-  if (token?.trim() !== process.env.KEEPALIVE_SECRET?.trim()) {
+  // Protect the endpoint
+  const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Guard against missing env vars
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.SUPABASE_SERVICE_ROLE_KEY
-  ) {
-    return Response.json({ error: "Missing env vars" }, { status: 500 });
   }
 
   try {
@@ -19,7 +12,8 @@ export async function GET(req: Request) {
       `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`,
       {
         headers: {
-          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY!}`,
         },
       },
     );
@@ -33,6 +27,7 @@ export async function GET(req: Request) {
 
     return Response.json({
       success: true,
+      message: "Keepalive ping successful",
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
