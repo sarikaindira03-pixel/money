@@ -69,11 +69,13 @@ const MonthYearPicker = ({
             top: "calc(100% + 4px)",
             left: 0,
             zIndex: 100,
-            border: "1px solid #e0e0e0",
+            backgroundColor: "#111111", // Added solid dark background
+            color: "#ffffff", // Text color to white for contrast
+            border: "1px solid #333333", // Adjusted border to match dark mode
             borderRadius: 10,
             padding: "12px",
             width: 220,
-            boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.50)", // Enhanced shadow for depth
           }}
         >
           {/* Year row */}
@@ -96,6 +98,7 @@ const MonthYearPicker = ({
                 lineHeight: 1,
                 padding: "2px 8px",
                 borderRadius: 6,
+                color: "#ffffff", // Arrow color white
               }}
             >
               ‹
@@ -112,6 +115,7 @@ const MonthYearPicker = ({
                 lineHeight: 1,
                 padding: "2px 8px",
                 borderRadius: 6,
+                color: "#ffffff", // Arrow color white
               }}
             >
               ›
@@ -141,18 +145,22 @@ const MonthYearPicker = ({
                     cursor: "pointer",
                     fontSize: 13,
                     fontWeight: isSelected ? 600 : 400,
-                    background: isSelected ? "#1a1a1a" : "transparent",
-                    color: isSelected ? "#fff" : "inherit",
+                    // Highlighted month gets a distinct gray/white layout
+                    background: isSelected ? "#ffffff" : "transparent",
+                    color: isSelected ? "#111111" : "#ffffff",
                     transition: "background 0.12s",
                   }}
                   onMouseEnter={(e) => {
-                    if (!isSelected)
-                      (e.target as HTMLElement).style.background = "#f0f0f0";
+                    if (!isSelected) {
+                      // Hover color updated to a nice dark-gray instead of light-gray
+                      (e.target as HTMLElement).style.background = "#2a2a2a";
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    if (!isSelected)
+                    if (!isSelected) {
                       (e.target as HTMLElement).style.background =
                         "transparent";
+                    }
                   }}
                 >
                   {m}
