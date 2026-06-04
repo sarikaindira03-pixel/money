@@ -31,158 +31,176 @@ const BudgetLedger = ({
     });
     router.push(`/month/${monthLabel}/${bucket_id}?allocated=${allocated}`);
   };
-
   return (
     <div
-      style={{ fontFamily: "var(--font-mono, monospace)", padding: "1rem 0" }}
+      style={{
+        fontFamily: "var(--font-mono, monospace)",
+        padding: "1rem 0",
+        width: "100%",
+      }}
     >
-      {/* Column headers */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 110px 110px 110px 72px",
-          padding: "4px 12px 4px 19px",
-          marginBottom: 4,
-        }}
-      >
-        {["Bucket", "Allocated", "Spent", "% Used"].map((h, i) => (
-          <span
-            key={h}
-            style={{
-              fontFamily: "var(--font-sans, sans-serif)",
-              fontSize: 11,
-              color: "var(--color-text-tertiary)",
-              textAlign: i === 0 ? "left" : "right",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-            }}
-          >
-            {h}
-          </span>
-        ))}
-      </div>
-      {Object.entries(groupedBuckets).map(([type, bucketList]) => {
-        const metaKey = type.toUpperCase() as keyof typeof BUCKET_META;
-        const meta = BUCKET_META[metaKey] ?? {
-          color: "#f0f0f0",
-          label: type,
-        };
+      {/* Clean Unified Layout Wrapper */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        {Object.entries(groupedBuckets).map(([type, bucketList]) => {
+          const metaKey = type.toUpperCase();
+          const meta = BUCKET_META[metaKey] ?? {
+            color: "#f0f0f0",
+            label: type,
+          };
 
-        return (
-          <div key={type} style={{ marginBottom: "2rem" }}>
-            {/* Group header */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                borderLeft: `3px solid ${meta.color}`,
-                paddingLeft: 12,
-                paddingBottom: 6,
-                marginBottom: 2,
-                borderBottom: "0.5px solid var(--color-border-tertiary)",
-              }}
-            >
-              <span
+          return (
+            <div key={type} style={{ width: "100%" }}>
+              {/* Group header */}
+              <div
                 style={{
-                  fontFamily: "var(--font-sans, sans-serif)",
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  color: meta.color,
+                  display: "flex",
+                  alignItems: "center",
+                  borderLeft: `3px solid ${meta.color}`,
+                  paddingLeft: "12px",
+                  paddingBottom: "6px",
+                  marginBottom: "6px",
+                  borderBottom: "0.5px solid var(--color-border-tertiary)",
                 }}
               >
-                {meta.label}
-              </span>
-            </div>
-
-            {/* Rows */}
-            {bucketList.map((b, idx) => {
-              const isOverSpend = b.spent > b.allocated;
-              const pct = b.utilization_percent ?? 0;
-              const pctColor =
-                pct > 100
-                  ? "#ef4444"
-                  : pct > 85
-                    ? "#eab308"
-                    : "var(--color-text-primary)";
-
-              return (
-                <div
-                  key={b.bucket_id}
+                <span
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 110px 110px 110px 72px",
-                    padding: "9px 12px 9px 16px",
-                    borderLeft: `3px solid ${meta.color}`,
-                    borderTop:
-                      idx === 0
-                        ? "none"
-                        : "0.5px solid var(--color-border-tertiary)",
-                    transition: "background 0.1s",
-                    cursor: "pointer",
+                    fontFamily: "var(--font-sans, sans-serif)",
+                    fontSize: "10px",
+                    fontWeight: 500,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: meta.color,
                   }}
-                  onClick={() =>
-                    handleBucketClick(b.month, b.bucket_id, b.allocated)
-                  }
-                  onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLDivElement).style.background =
-                      "var(--color-background-secondary)")
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.currentTarget as HTMLDivElement).style.background =
-                      "transparent")
-                  }
                 >
-                  {/* Name */}
+                  {meta.label}
+                </span>
+              </div>
+
+              {/* Column sub-headers (Scoped inside group for structural clarity) */}
+              <div
+                style={{
+                  display: "grid",
+                  /* Dynamic grid tracking: Flexible bucket name, fixed widths that contract perfectly on mobile */
+                  gridTemplateColumns: "minmax(80px, 1fr) 65px 65px 50px",
+                  gap: "8px",
+                  padding: "4px 12px 4px 15px",
+                  borderBottom: "1px dashed var(--color-border-tertiary)",
+                  opacity: 0.7,
+                }}
+              >
+                {["Bucket", "Alloc", "Spent", "%"].map((h, i) => (
                   <span
+                    key={h}
                     style={{
                       fontFamily: "var(--font-sans, sans-serif)",
-                      fontSize: 13,
-                      color: "var(--color-text-primary)",
-                      textAlign: "left",
+                      fontSize: "9px",
+                      color: "var(--color-text-tertiary)",
+                      textAlign: i === 0 ? "left" : "right",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
                     }}
                   >
-                    {b.bucket_name}
+                    {h}
                   </span>
-                  {/* Allocated */}
-                  <span
-                    style={{
-                      fontSize: 13,
-                      textAlign: "right",
-                      color: "var(--color-text-primary)",
-                    }}
-                  >
-                    {fmt(b.allocated)}
-                  </span>
-                  {/* Spent */}
-                  <span
-                    style={{
-                      fontSize: 13,
-                      textAlign: "right",
-                      color: isOverSpend
-                        ? "#ef4444"
-                        : "var(--color-text-primary)",
-                    }}
-                  >
-                    {fmt(b.spent)}
-                  </span>
-                  {/* % Used */}
-                  <span
-                    style={{
-                      fontSize: 13,
-                      textAlign: "right",
-                      color: pctColor,
-                    }}
-                  >
-                    {pct}%
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
+                ))}
+              </div>
+
+              {/* Data Rows */}
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {bucketList.map((b, idx) => {
+                  const isOverSpend = b.spent > b.allocated;
+                  const pct = b.utilization_percent ?? 0;
+                  const pctColor =
+                    pct > 100
+                      ? "#ef4444"
+                      : pct > 85
+                        ? "#eab308"
+                        : "var(--color-text-primary)";
+
+                  return (
+                    <div
+                      key={b.bucket_id}
+                      onClick={() =>
+                        handleBucketClick(b.month, b.bucket_id, b.allocated)
+                      }
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "var(--color-background-secondary)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                      }}
+                      style={{
+                        display: "grid",
+                        /* Identical grid definition ensuring absolute alignment tracking with headers */
+                        gridTemplateColumns: "minmax(80px, 1fr) 65px 65px 50px",
+                        gap: "8px",
+                        alignItems: "center",
+                        borderLeft: `3px solid ${meta.color}`,
+                        borderBottom:
+                          "0.5px solid var(--color-border-tertiary)",
+                        transition: "background 0.1s",
+                        cursor: "pointer",
+                        padding: "10px 12px 10px 12px",
+                      }}
+                    >
+                      {/* Col 1: Bucket Name */}
+                      <span
+                        style={{
+                          fontFamily: "var(--font-sans, sans-serif)",
+                          fontSize: "12px",
+                          color: "var(--color-text-primary)",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {b.bucket_name}
+                      </span>
+
+                      {/* Col 2: Allocated */}
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          textAlign: "right",
+                          color: "var(--color-text-secondary)",
+                        }}
+                      >
+                        {fmt(b.allocated)}
+                      </span>
+
+                      {/* Col 3: Spent */}
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          textAlign: "right",
+                          color: isOverSpend
+                            ? "#ef4444"
+                            : "var(--color-text-secondary)",
+                        }}
+                      >
+                        {fmt(b.spent)}
+                      </span>
+
+                      {/* Col 4: Percent Used */}
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          textAlign: "right",
+                          color: pctColor,
+                          fontWeight: pct >= 100 ? "60px" : "normal",
+                        }}
+                      >
+                        {pct}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

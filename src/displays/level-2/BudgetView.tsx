@@ -69,31 +69,53 @@ const BudgetView = ({ monthId }: { monthId: string }) => {
   const pct = salary > 0 ? Math.round((total_allocated / salary) * 100) : 0;
 
   return (
-    <div className="animate-in">
-      <div className="lv-h1">Records.</div>
+    <div className="animate-in" style={{ padding: "0 0 2rem" }}>
+      <div className="lv-h1" style={{ marginBottom: "1rem" }}>
+        Records.
+      </div>
 
-      <div className="stat-grid">
-        <div className="stat">
-          <div className="stat-l">Paycheck</div>
-          <div className="stat-v ok">{fmt(salary)}</div>
-        </div>
-        <div className="stat">
-          <div className="stat-l">Allocated</div>
-          <div className={`stat-v ${total_allocated > salary ? "over" : "ok"}`}>
-            {fmt(total_allocated)}
+      {/* Stat grid — 3 equal columns, compact on mobile */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 8,
+          marginBottom: "1rem",
+        }}
+      >
+        {[
+          { label: "Paycheck", value: fmt(salary), cls: "ok" },
+          {
+            label: "Allocated",
+            value: fmt(total_allocated),
+            cls: total_allocated > salary ? "over" : "ok",
+          },
+          { label: "Spent", value: fmt(total_spent), cls: "ok" },
+        ].map(({ label, value, cls }) => (
+          <div key={label} className="stat" style={{ minWidth: 0 }}>
+            <div
+              className="stat-l"
+              style={{ fontSize: 10, letterSpacing: "0.08em" }}
+            >
+              {label}
+            </div>
+            <div
+              className={`stat-v ${cls}`}
+              style={{
+                fontSize: "clamp(13px, 3.5vw, 18px)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {value}
+            </div>
           </div>
-        </div>
-        <div className="stat">
-          <div className="stat-l">Spent</div>
-          <div className="stat-v dim">{fmt(total_spent)}</div>
-        </div>
+        ))}
       </div>
-      <div>
-        {!data.isRecord && (
-          <h1 className="text-yellow-400">No Records, Please Add New Record</h1>
-        )}
-      </div>
-      <div className="prog">
+
+      {/* Progress bar */}
+      <div className="prog" style={{ marginBottom: pct > 100 ? 4 : "1rem" }}>
         <div
           className="prog-fill"
           style={{
@@ -102,27 +124,59 @@ const BudgetView = ({ monthId }: { monthId: string }) => {
           }}
         />
       </div>
-
       {pct > 100 && (
-        <div className="text-over text-sm mt-1">
+        <div
+          className="text-over text-sm"
+          style={{ marginBottom: "1rem", fontSize: 11 }}
+        >
           Over allocated by {fmt(total_allocated - salary)}
         </div>
       )}
 
-      {/* Button row */}
+      {!data.isRecord && (
+        <p
+          style={{
+            fontSize: 12,
+            color: "#eab308",
+            marginBottom: "1rem",
+            letterSpacing: "0.04em",
+          }}
+        >
+          No records yet — add your first entry below.
+        </p>
+      )}
+
+      {/* Button row — wraps naturally on mobile */}
       {!!data.is_month_open && (
         <>
-          <div className="brow">
-            <button className="btn" onClick={() => setAllocateOpen(true)}>
+          <div
+            className="brow"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 8,
+              marginBottom: "1rem",
+            }}
+          >
+            <button
+              className="btn"
+              onClick={() => setAllocateOpen(true)}
+              style={{ flex: "1 1 auto", minWidth: 120, minHeight: 40 }}
+            >
               Add New Record
             </button>
-            <button className="btn " onClick={() => setCreateOpen(true)}>
+            <button
+              className="btn"
+              onClick={() => setCreateOpen(true)}
+              style={{ flex: "1 1 auto", minWidth: 120, minHeight: 40 }}
+            >
               + New Bucket
             </button>
             {!data.hasOrangeBucket && (
               <button
-                className="btn btn-orange "
+                className="btn btn-orange"
                 onClick={() => setShowForm(true)}
+                style={{ flex: "1 1 100%", minHeight: 40 }}
               >
                 Add Surprise Expense
               </button>

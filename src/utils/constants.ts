@@ -68,3 +68,13 @@ export const API_ENDPOINTS = {
 };
 
 export const DEFAULT_SALARY = "90000";
+
+export const TYPES = ["RED", "YELLOW", "GREEN", "BLUE"] as const;
+export type DisplayType = (typeof TYPES)[number];
+
+export const TYPE_COLOR: Record<DisplayType, string> = {
+  RED: "var(--red)",
+  YELLOW: "var(--yellow)",
+  GREEN: "var(--green)",
+  BLUE: "var(--blue)",
+};

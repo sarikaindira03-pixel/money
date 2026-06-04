@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -13,6 +13,7 @@ import { useAllocateBudget } from "@/src/hooks/budgets/useAllocateBudget";
 import { fmt } from "@/src/lib/formats";
 import { useBucketConfigs } from "@/src/hooks/buckets/useBucketConfigs";
 import { buildGrouped, deriveSelected } from "@/src/lib/helpers";
+import { DisplayType } from "@/src/utils/constants";
 
 interface AllocateBucketDialogProps {
   open: boolean;
@@ -44,9 +45,14 @@ export default function AllocateBucketDialog({
   const groupedConfigs = buildGrouped(buckets);
   const { selectedBucket, isBlue } = deriveSelected(buckets, selectedBucketId);
 
-  const accentColor = selectedBucket
-    ? (TYPE_COLOR[selectedBucket.display_type] ?? "var(--text2)")
+  // const accentColor = selectedBucket
+  //   ? (TYPE_COLOR[selectedBucket.display_type] ?? "var(--text2)")
+  //   ;
+
+  const currentDisplayType = selectedBucket
+    ? (selectedBucket?.display_type as DisplayType)
     : "var(--border2)";
+  const accentColor = TYPE_COLOR[currentDisplayType];
 
   const reset = () => {
     setSelectedBucketId("");
@@ -107,18 +113,28 @@ export default function AllocateBucketDialog({
           border: `1px solid ${accentColor}`,
           borderRadius: 0,
           padding: 0,
+          // Responsive width: full-width on mobile with side margins,
+          // capped at 420px on larger screens
+          width: "calc(100vw - 32px)",
           maxWidth: 420,
           boxShadow: "0 0 0 1px var(--bg), 0 24px 48px rgba(0,0,0,0.8)",
           fontFamily: '"JetBrains Mono", monospace',
+          // Ensure it doesn't overflow the viewport vertically on small screens
+          maxHeight: "calc(100dvh - 48px)",
+          overflowY: "auto",
         }}
       >
         {/* Header */}
         <AlertDialogHeader
           style={{
             borderBottom: "1px solid var(--border)",
-            padding: "16px 20px",
+            padding: "14px 16px",
             borderLeft: `3px solid ${accentColor}`,
             background: "var(--bg)",
+            // Stick to top when content scrolls
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
           }}
         >
           <div
@@ -126,6 +142,7 @@ export default function AllocateBucketDialog({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              gap: 8,
             }}
           >
             <AlertDialogTitle
@@ -136,46 +153,41 @@ export default function AllocateBucketDialog({
                 color: "var(--text)",
                 fontWeight: 400,
                 fontFamily: '"JetBrains Mono", monospace',
+                whiteSpace: "nowrap",
               }}
             >
               Allocate Funds
             </AlertDialogTitle>
+
             <span
               style={{
                 fontSize: 9,
                 letterSpacing: "0.15em",
                 textTransform: "uppercase",
                 color: "var(--text3)",
+                // Truncate long month IDs on very small screens
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
               }}
             >
               {monthId}
             </span>
           </div>
-          <p
-            style={{
-              fontSize: 10,
-              letterSpacing: "0.04em",
-              opacity: selectedBucket ? 1 : 0.4,
-              transition: "opacity 0.15s",
-            }}
-          >
-            {isBlue && selectedBucket
-              ? "→ allocate_blue_bucket"
-              : selectedBucket
-                ? "→ allocate_bucket"
-                : "→ select a bucket"}
-          </p>
         </AlertDialogHeader>
+
         <AlertDialogDescription className="sr-only">
           Allocate funds to a budget bucket for {monthId}.
         </AlertDialogDescription>
+
         {/* Body */}
         <div
           style={{
-            padding: "20px",
+            padding: "16px",
             display: "flex",
             flexDirection: "column",
-            gap: 16,
+            gap: 14,
           }}
         >
           {isLoading && (
@@ -191,7 +203,15 @@ export default function AllocateBucketDialog({
           )}
 
           {/* Bucket selector */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+              width: "100%",
+            }}
+          >
             <label
               style={{
                 fontSize: 9,
@@ -202,20 +222,36 @@ export default function AllocateBucketDialog({
             >
               Bucket
             </label>
-            <GroupedSelect
-              value={selectedBucketId}
-              onChange={setSelectedBucketId}
-              placeholder="— pick a bucket —"
-              groups={Object.entries(groupedConfigs).map(
-                ([category, buckets]) => ({
-                  label: category,
-                  items: buckets.map((bucket) => ({
-                    label: bucket.bucket_name,
-                    value: String(bucket.bucket_id),
-                  })),
-                }),
-              )}
-            />
+
+            {/* 💡 SCROLL SYSTEM BOUNDARY
+      Caps growing lists to a maximum height. 
+      If your GroupedSelect has an internal 'dropdownClassName' or style prop for its popover, 
+      apply these scroll styles there instead to prevent internal page jumping.
+    */}
+            <div
+              className="select-viewport-scroller"
+              style={{
+                maxHeight: "220px",
+                overflowY: "auto",
+                overflowX: "hidden",
+                width: "100%",
+              }}
+            >
+              <GroupedSelect
+                value={selectedBucketId}
+                onChange={setSelectedBucketId}
+                placeholder="— pick a bucket —"
+                groups={Object.entries(groupedConfigs).map(
+                  ([category, buckets]) => ({
+                    label: category,
+                    items: buckets.map((bucket) => ({
+                      label: bucket.bucket_name,
+                      value: String(bucket.bucket_id),
+                    })),
+                  }),
+                )}
+              />
+            </div>
 
             {/* Selected bucket info strip */}
             {selectedBucket && (
@@ -224,11 +260,14 @@ export default function AllocateBucketDialog({
                   display: "flex",
                   alignItems: "center",
                   gap: 8,
-                  padding: "6px 10px",
+                  padding: "8px 12px", // Optimized for mobile touch tracking
                   background: "var(--bg2)",
                   border: "1px solid var(--border)",
-                  borderLeft: `2px solid ${accentColor}`,
-                  marginTop: 4,
+                  borderLeft: `3px solid ${accentColor}`, // 3px for high visibility on high-res mobile displays
+                  marginTop: 6,
+                  minWidth: 0, // Enforces ellipsis truncation mechanics on small viewports
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               >
                 <span
@@ -237,16 +276,46 @@ export default function AllocateBucketDialog({
                     letterSpacing: "0.12em",
                     textTransform: "uppercase",
                     color: accentColor,
+                    fontWeight: 600,
+                    flexShrink: 0,
                   }}
                 >
                   {selectedBucket.display_type}
                 </span>
-                <span style={{ color: "var(--border2)" }}>·</span>
-                <span style={{ fontSize: 11, color: "var(--text2)" }}>
+
+                <span style={{ color: "var(--border2)", flexShrink: 0 }}>
+                  ·
+                </span>
+
+                <span
+                  style={{
+                    fontSize: 12, // 12px matches clean monochrome interfaces perfectly
+                    fontFamily: "var(--font-sans, sans-serif)",
+                    color: "var(--text2)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
+                  }}
+                >
                   {selectedBucket.bucket_name}
                 </span>
               </div>
             )}
+
+            {/* Elegant subtle scrollbars for modern webkit viewports */}
+            <style>{`
+      .select-viewport-scroller::-webkit-scrollbar {
+        width: 4px;
+      }
+      .select-viewport-scroller::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .select-viewport-scroller::-webkit-scrollbar-thumb {
+        background: var(--border2, #333);
+        border-radius: 4px;
+      }
+    `}</style>
           </div>
 
           {/* Amount */}
@@ -278,6 +347,7 @@ export default function AllocateBucketDialog({
               </span>
               <input
                 type="number"
+                inputMode="decimal" // shows numeric keyboard on mobile
                 min={0}
                 value={amount}
                 onChange={(e) => {
@@ -288,6 +358,9 @@ export default function AllocateBucketDialog({
                 style={{
                   width: "100%",
                   paddingLeft: 24,
+                  // Larger touch target on mobile
+                  minHeight: 44,
+                  fontSize: 14,
                   borderColor: amount ? accentColor : undefined,
                 }}
               />
@@ -318,12 +391,27 @@ export default function AllocateBucketDialog({
         </div>
 
         {/* Footer */}
-        <div style={{ display: "flex", gap: 8, padding: "0 20px 20px" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            padding: "0 16px 16px",
+            // Stick to bottom when content scrolls
+            position: "sticky",
+            bottom: 0,
+            background: "var(--bg1)",
+            paddingTop: 12,
+            borderTop: "1px solid var(--border)",
+          }}
+        >
           <button
             className="btn btn-ghost"
             onClick={handleClose}
             disabled={loading}
-            style={{ flex: 1 }}
+            style={{
+              flex: 1,
+              minHeight: 44, // accessible touch target
+            }}
           >
             Cancel
           </button>
@@ -333,6 +421,7 @@ export default function AllocateBucketDialog({
             disabled={loading || success || !selectedBucketId || !amount}
             style={{
               flex: 1,
+              minHeight: 44, // accessible touch target
               borderColor: accentColor,
               opacity:
                 loading || success || !selectedBucketId || !amount ? 0.4 : 1,

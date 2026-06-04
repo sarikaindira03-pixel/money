@@ -12,11 +12,17 @@ const supabase = createClient(
 
 export async function GET() {
   try {
+    const headerList = await headers();
+    const userId = headerList.get("x-user-id");
+
+    if (!userId) return badRequest("Unauthorized action token context.");
+
     // 1. Fetch active configs using Supabase's native filtering syntax
     const { data, error } = await supabase
       .from("bucket_configs")
       .select("*")
       .eq("is_active", true)
+      .eq("user_id", userId)
       .not("display_type", "in", "(RESERVE)"); // Replaces "not.in.(RESERVE)"
 
     if (error) throw error;

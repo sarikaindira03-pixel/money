@@ -9,21 +9,12 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { useCreateBucket } from "@/src/hooks/buckets/useCreateBucket";
+import { DisplayType, TYPE_COLOR, TYPES } from "@/src/utils/constants";
 
 interface CreateBucketDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const TYPES = ["RED", "YELLOW", "GREEN", "BLUE"] as const;
-type DisplayType = (typeof TYPES)[number];
-
-const TYPE_COLOR: Record<DisplayType, string> = {
-  RED: "var(--red)",
-  YELLOW: "var(--yellow)",
-  GREEN: "var(--green)",
-  BLUE: "var(--blue)",
-};
 
 export default function CreateBucketDialog({
   open,
@@ -94,18 +85,28 @@ export default function CreateBucketDialog({
           border: `1px solid ${accentColor}`,
           borderRadius: 0,
           padding: 0,
-          maxWidth: 400,
+          // Responsive width: full-width on mobile with side margins,
+          // capped at 420px on larger screens
+          width: "calc(100vw - 32px)",
+          maxWidth: 420,
           boxShadow: "0 0 0 1px var(--bg), 0 24px 48px rgba(0,0,0,0.8)",
           fontFamily: '"JetBrains Mono", monospace',
+          // Ensure it doesn't overflow the viewport vertically on small screens
+          maxHeight: "calc(100dvh - 48px)",
+          overflowY: "auto",
         }}
       >
         {/* Header */}
         <AlertDialogHeader
           style={{
             borderBottom: "1px solid var(--border)",
-            padding: "16px 20px",
+            padding: "14px 16px",
             borderLeft: `3px solid ${accentColor}`,
             background: "var(--bg)",
+            // Stick to top when content scrolls
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
           }}
         >
           <div
@@ -113,6 +114,7 @@ export default function CreateBucketDialog({
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              gap: 8,
             }}
           >
             <AlertDialogTitle
@@ -123,6 +125,7 @@ export default function CreateBucketDialog({
                 color: "var(--text)",
                 fontWeight: 400,
                 fontFamily: '"JetBrains Mono", monospace',
+                whiteSpace: "nowrap",
               }}
             >
               New Bucket
@@ -132,7 +135,12 @@ export default function CreateBucketDialog({
                 fontSize: 9,
                 letterSpacing: "0.15em",
                 textTransform: "uppercase",
-                color: accentColor,
+                color: "var(--text3)",
+                // Truncate long month IDs on very small screens
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                minWidth: 0,
               }}
             >
               {displayType}
