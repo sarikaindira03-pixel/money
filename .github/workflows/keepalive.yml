@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Ping keepalive
         run: |
-          curl -f "${{ secrets.APP_URL }}/api/keepalive?token=${{ secrets.KEEPALIVE_SECRET }}"
+          curl -v "${{ secrets.APP_URL }}/api/keepalive?token=${{ secrets.KEEPALIVE_SECRET }}"

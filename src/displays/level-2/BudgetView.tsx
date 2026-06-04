@@ -73,6 +73,7 @@ const BudgetView = ({ monthId }: { monthId: string }) => {
       <div className="lv-h1" style={{ marginBottom: "1rem" }}>
         Records.
       </div>
+      <a href="https://funny-florentine-523c81.netlify.app/">Guide</a>
 
       {/* Stat grid — 3 equal columns, compact on mobile */}
       <div
