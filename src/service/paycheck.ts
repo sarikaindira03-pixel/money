@@ -5,14 +5,11 @@ import { anonAuthHeaders } from "../lib/config";
 
 export const paycheckApi = {
   list: async (): Promise<Paycheck[]> => {
-    const { data } = await axios.get(
-      `http://localhost:3002/api/${API_ENDPOINTS.paychecks}`,
-      {
-        headers: {
-          ...anonAuthHeaders(), // Adds { apikey: "...", Authorization: "Bearer ..." } if pointing to Supabase
-        },
+    const { data } = await axios.get(`${BASE_URL}/${API_ENDPOINTS.paychecks}`, {
+      headers: {
+        ...anonAuthHeaders(), // Adds { apikey: "...", Authorization: "Bearer ..." } if pointing to Supabase
       },
-    );
+    });
     return data.data || data;
   },
   create: async (payload: { month: string; total_income: number }) => {

@@ -20,7 +20,9 @@ export function NavbarClient() {
   };
   return (
     <div className="nav-bar">
-      <div className="nav-title">Bill Book</div>
+      <div className="nav-title" onClick={() => router.push("/")}>
+        Bill Book
+      </div>
       <div className="nav-right">
         <NavButton
           className="cursor-not-allowed"
