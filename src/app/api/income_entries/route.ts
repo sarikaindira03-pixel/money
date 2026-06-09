@@ -1,11 +1,13 @@
 import { head_user_id } from "@/src/lib/server-config";
 import { badRequest, serverError } from "@/src/lib/response";
-import supabase from "@/src/lib/supabase/postgrest";
+
 import { NextResponse } from "next/server";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 export async function GET(req: Request) {
   const month = new URL(req.url).searchParams.get("month");
 
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized");
@@ -28,6 +30,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) {

@@ -2,13 +2,14 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { badRequest, handleProcedureError } from "@/src/lib/apiResponse"; // or your uniform response helpers
-import supabase from "@/src/lib/supabase/postgrest";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 import { head_user_id } from "@/src/lib/server-config";
 
 // Initialize the standard server-side Supabase client with the Service Role key
 
 export async function GET() {
   try {
+    const supabase = getSupabase();
     const userId = await head_user_id();
 
     if (!userId) return badRequest("Unauthorized action token context.");
@@ -32,6 +33,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const supabase = getSupabase();
     // 2. Extract the tamper-proof user ID from the proxy headers
     const headerList = await headers();
     const userId = headerList.get("x-user-id");

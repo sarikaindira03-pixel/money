@@ -3,10 +3,11 @@ import { handleProcedureError } from "@/src/lib/apiResponse";
 import { badRequest, created } from "@/src/lib/response";
 
 import { head_user_id } from "@/src/lib/server-config";
-import supabase from "@/src/lib/supabase/postgrest";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 // GET /api/ledger?bucket_id=2&month=2026-01
 export async function GET(req: NextRequest) {
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");
@@ -31,6 +32,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: Request) {
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");

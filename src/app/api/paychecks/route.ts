@@ -8,12 +8,13 @@
 import { NextResponse } from "next/server";
 import { badRequest, created, serverError } from "../../../lib/response";
 import { handleProcedureError } from "../../../lib/apiResponse";
-import supabase from "@/src/lib/supabase/postgrest";
 import { head_user_id } from "@/src/lib/server-config";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 export async function GET(req: Request) {
   const month = new URL(req.url).searchParams.get("month");
 
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
 
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
   try {
     // 1. Read the user ID straight out of the verified proxy headers
 
+    const supabase = getSupabase();
     const userId = await head_user_id();
 
     if (!userId) {

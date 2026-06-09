@@ -1,7 +1,7 @@
 import { handleProcedureError } from "@/src/lib/apiResponse";
 import { head_user_id } from "@/src/lib/server-config";
 import { badRequest, deleted } from "@/src/lib/response";
-import supabase from "@/src/lib/supabase/postgrest";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 const ALLOWED_PROCEDURES = [
   "reverse_ledger_entry",
@@ -13,6 +13,7 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");

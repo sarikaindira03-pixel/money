@@ -1,9 +1,10 @@
 import { head_user_id } from "@/src/lib/server-config";
 import { badRequest, serverError } from "@/src/lib/response";
-import supabase from "@/src/lib/supabase/postgrest";
 import { NextResponse } from "next/server";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 export async function GET() {
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) {

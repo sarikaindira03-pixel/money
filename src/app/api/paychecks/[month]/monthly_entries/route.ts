@@ -1,7 +1,7 @@
 import { head_user_id } from "@/src/lib/server-config";
 import { badRequest } from "@/src/lib/response";
-import supabase from "@/src/lib/supabase/postgrest";
 import { NextRequest, NextResponse } from "next/server";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 type RouteContext = {
   params: Promise<{ month: string }>;
@@ -10,6 +10,7 @@ type RouteContext = {
 export async function GET(req: NextRequest, context: RouteContext) {
   const { month } = await context.params;
 
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");

@@ -1,12 +1,13 @@
 // /api/budget/remove-allocation/route.ts
 import { head_user_id } from "@/src/lib/server-config";
 import { badRequest, serverError } from "@/src/lib/response";
-import supabase from "@/src/lib/supabase/postgrest";
 import { NextResponse } from "next/server";
 import { handleProcedureError } from "@/src/lib/apiResponse";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 export async function POST(req: Request) {
   try {
+    const supabase = getSupabase();
     const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");
 

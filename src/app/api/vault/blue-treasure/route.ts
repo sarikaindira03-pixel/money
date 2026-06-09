@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { headers } from "next/headers";
 import { badRequest } from "@/src/lib/response";
 import { handleProcedureError } from "@/src/lib/apiResponse";
 import { head_user_id } from "@/src/lib/server-config";
-import supabase from "@/src/lib/supabase/postgrest";
+import { getSupabase } from "@/src/lib/supabase/postgrest";
 
 export async function GET(req: NextRequest) {
+  const supabase = getSupabase();
   try {
     const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");
