@@ -31,7 +31,7 @@ export const YearForm = () => {
     try {
       await createPaycheck({
         month: selectedMonth,
-        salary: Number(salaryInput),
+        total_income: Number(salaryInput),
       });
       resetForm();
       queryClient.invalidateQueries({ queryKey: qk("paychecks") });

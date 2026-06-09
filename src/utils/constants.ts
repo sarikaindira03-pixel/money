@@ -1,4 +1,3 @@
-import { dbBaseUrl } from "../lib/config";
 import type { BucketMeta, BucketType } from "../types/data";
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -55,20 +54,24 @@ export const MONTHS_SHORT = [
 ];
 
 // sairam
-// export const dead_user_id = "a240aa31-9303-41d1-9caf-a3389dedfd99";
+export const dead_user_id = "a240aa31-9303-41d1-9caf-a3389dedfd99";
 // indira
-export const dead_user_id = "daf84b18-b04f-4541-8326-d09ba41e7cf0";
+// export const dead_user_id = "daf84b18-b04f-4541-8326-d09ba41e7cf0";
 export const BASE_URL = "/api";
 export const API_ENDPOINTS = {
+  income_entries: "income_entries",
+  paychecks: "paychecks",
   bucket_configs: "bucket_configs",
   monthly_entries: "monthly_entries",
   locker: "locker",
   ledger: "ledger",
+  remove_budget_allocate: "budget",
   budget_allocate: "budget/allocate",
 };
 
 export const DEFAULT_SALARY = "90000";
 
+export const LONG_PRESS_MS = 600;
 export const TYPES = ["RED", "YELLOW", "GREEN", "BLUE"] as const;
 export type DisplayType = (typeof TYPES)[number];
 

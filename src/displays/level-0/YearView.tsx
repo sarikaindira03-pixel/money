@@ -17,7 +17,7 @@ const YearView = () => {
       k.startsWith(`${year}-`),
     );
     const total = months.reduce(
-      (s, m) => s + (paycheckRecord[m]?.salary || 0),
+      (s, m) => s + (paycheckRecord[m]?.total_income || 0),
       0,
     );
     return { count: months.length, total };

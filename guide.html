@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vault — Color-Coded Personal Finance Engine</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #09090b;
+        --surface: #111113;
+        --surface2: #18181b;
+        --surface3: #202024;
+        --border: rgba(255, 255, 255, 0.06);
+        --border2: rgba(255, 255, 255, 0.1);
+        --border3: rgba(255, 255, 255, 0.15);
+        --text: #e4e4e7;
+        --muted: #71717a;
+        --subtle: #3f3f46;
+        --orange: #f97316;
+        --orange-dim: rgba(249, 115, 22, 0.08);
+        --orange-border: rgba(249, 115, 22, 0.25);
+        --yellow: #eab308;
+        --yellow-dim: rgba(234, 179, 8, 0.08);
+        --yellow-border: rgba(234, 179, 8, 0.25);
+        --red: #ef4444;
+        --red-dim: rgba(239, 68, 68, 0.08);
+        --red-border: rgba(239, 68, 68, 0.25);
+        --green: #22c55e;
+        --green-dim: rgba(34, 197, 94, 0.08);
+        --green-border: rgba(34, 197, 94, 0.25);
+        --blue: #3b82f6;
+        --blue-dim: rgba(59, 130, 246, 0.08);
+        --blue-border: rgba(59, 130, 246, 0.25);
+        --sans: "DM Sans", sans-serif;
+        --serif: "Instrument Serif", serif;
+        --mono: "DM Mono", monospace;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: var(--sans);
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 2rem 8rem;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(9, 9, 11, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+      }
+      .nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 52px;
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        letter-spacing: -0.01em;
+      }
+      .nav-logo-mark {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: var(--orange);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .nav-link {
+        font-size: 12.5px;
+        color: var(--muted);
+        padding: 5px 12px;
+        border-radius: 6px;
+        transition: color 0.15s;
+      }
+      .nav-link:hover {
+        color: var(--text);
+      }
+      .nav-demo {
+        font-size: 12.5px;
+        font-weight: 500;
+        background: var(--orange);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 7px;
+        transition: opacity 0.15s;
+      }
+      .nav-demo:hover {
+        opacity: 0.88;
+      }
+
+      /* ── HERO ── */
+      .hero {
+        padding: 7rem 0 5rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--orange);
+        margin-bottom: 2rem;
+      }
+      .hero-eyebrow-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--orange);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+      .hero h1 {
+        font-family: var(--serif);
+        font-size: clamp(3rem, 7vw, 5.5rem);
+        font-weight: 400;
+        font-style: italic;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        color: #fff;
+        margin-bottom: 1.5rem;
+      }
+      .hero h1 em {
+        color: var(--orange);
+        font-style: italic;
+      }
+      .hero-sub {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 540px;
+        line-height: 1.75;
+        margin-bottom: 2.5rem;
+      }
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--orange);
+        color: #fff;
+        font-size: 13.5px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: opacity 0.15s;
+      }
+      .btn-primary:hover {
+        opacity: 0.88;
+      }
+      .btn-primary svg {
+        width: 14px;
+        height: 14px;
+      }
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border3);
+        color: var(--muted);
+        font-size: 13.5px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .btn-ghost:hover {
+        color: var(--text);
+        border-color: var(--border3);
+      }
+      .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 2.5rem;
+      }
+      .hero-badge {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--muted);
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        padding: 4px 10px;
+        border-radius: 5px;
+      }
+
+      /* ── SECTION HEADERS ── */
+      .section {
+        padding: 4.5rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .section:last-child {
+        border-bottom: none;
+      }
+      .section-label {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.6rem;
+      }
+      .section-title {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 2rem;
+        font-weight: 400;
+        color: #fff;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.75rem;
+        line-height: 1.15;
+      }
+      .section-desc {
+        font-size: 14px;
+        color: var(--muted);
+        max-width: 520px;
+        line-height: 1.75;
+        margin-bottom: 2.5rem;
+      }
+
+      /* ── SCREENSHOT FRAME ── */
+      .screen-frame {
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow:
+          0 32px 80px rgba(0, 0, 0, 0.6),
+          0 0 0 1px rgba(255, 255, 255, 0.03);
+        margin-bottom: 0.75rem;
+      }
+      .screen-chrome {
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+        padding: 11px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .screen-dots {
+        display: flex;
+        gap: 6px;
+      }
+      .screen-dots span {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+      .dot-r {
+        background: #ff5f57;
+      }
+      .dot-y {
+        background: #febc2e;
+      }
+      .dot-g {
+        background: #28c840;
+      }
+      .screen-url {
+        flex: 1;
+        background: var(--surface3);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 4px 12px;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        text-align: center;
+        max-width: 320px;
+        margin: 0 auto;
+      }
+      .screen-caption {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--subtle);
+        text-align: center;
+        padding: 6px 0 0;
+      }
+
+      /* ── DASHBOARD MOCKUP ── */
+      .app-shell {
+        display: flex;
+        height: 440px;
+      }
+      .app-sidebar {
+        width: 210px;
+        background: var(--surface2);
+        border-right: 1px solid var(--border);
+        padding: 18px 12px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        padding: 4px 10px 16px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 10px;
+      }
+      .brand-mark {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: var(--orange);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .s-nav {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 7px;
+        font-size: 12px;
+        color: var(--muted);
+        cursor: default;
+      }
+      .s-nav.active {
+        background: var(--surface3);
+        color: var(--text);
+      }
+      .s-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .app-content {
+        flex: 1;
+        padding: 22px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      .app-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+      .app-month {
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        line-height: 1.2;
+      }
+      .app-sub {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .log-btn {
+        background: var(--orange-dim);
+        border: 1px solid var(--orange-border);
+        color: var(--orange);
+        font-size: 11px;
+        font-family: var(--mono);
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: default;
+      }
+      .vault-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .vc {
+        border-radius: 10px;
+        padding: 14px 16px;
+        border: 1px solid var(--border2);
+      }
+      .vc.main {
+        background: var(--orange-dim);
+        border-color: var(--orange-border);
+      }
+      .vc.blue {
+        background: var(--blue-dim);
+        border-color: var(--blue-border);
+      }
+      .vc-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin-bottom: 5px;
+        font-family: var(--mono);
+      }
+      .vc-amount {
+        font-family: var(--mono);
+        font-size: 20px;
+        font-weight: 500;
+      }
+      .vc.main .vc-amount {
+        color: var(--orange);
+      }
+      .vc.blue .vc-amount {
+        color: var(--blue);
+      }
+      .vc-note {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      .buckets {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .brow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 9px 13px;
+      }
+      .bdot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .bname {
+        font-size: 12px;
+        color: var(--text);
+        flex: 1;
+      }
+      .btrack {
+        width: 72px;
+        height: 3px;
+        background: var(--surface3);
+        border-radius: 2px;
+      }
+      .bfill {
+        height: 3px;
+        border-radius: 2px;
+      }
+      .bamt {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--muted);
+        min-width: 70px;
+        text-align: right;
+      }
+
+      /* ── TRANSACTION MOCKUP ── */
+      .tx-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 22px;
+        border-bottom: 1px solid var(--border);
+      }
+      .tx-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: #fff;
+      }
+      .tx-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .tx-btn {
+        font-size: 11px;
+        font-family: var(--mono);
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: default;
+      }
+      .tx-btn.ghost {
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        color: var(--muted);
+      }
+      .tx-btn.accent {
+        background: var(--orange-dim);
+        border: 1px solid var(--orange-border);
+        color: var(--orange);
+      }
+      .tx-row {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 12px 22px;
+        border-bottom: 1px solid var(--border);
+      }
+      .tx-row:last-child {
+        border-bottom: none;
+      }
+      .tx-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .tx-info {
+        flex: 1;
+      }
+      .tx-name {
+        font-size: 13px;
+        color: var(--text);
+        font-weight: 500;
+      }
+      .tx-meta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .tx-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .tx-pill {
+        font-size: 10px;
+        font-family: var(--mono);
+        font-weight: 500;
+        padding: 3px 8px;
+        border-radius: 5px;
+        letter-spacing: 0.04em;
+      }
+      .tx-amt {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 500;
+        min-width: 70px;
+        text-align: right;
+      }
+
+      /* ── ENVELOPE CARDS ── */
+      .env-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 12px;
+      }
+      .env-card {
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+      }
+      .env-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+      }
+      .env-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .env-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .env-name {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .env-behavior {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+      .env-desc {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .env-orange {
+        background: var(--orange-dim);
+        border-color: var(--orange-border);
+      }
+      .env-orange::before {
+        background: var(--orange);
+      }
+      .env-orange .env-name {
+        color: var(--orange);
+      }
+      .env-orange .env-behavior {
+        background: var(--orange-dim);
+        color: var(--orange);
+        border: 1px solid var(--orange-border);
+      }
+
+      .env-yellow {
+        background: var(--yellow-dim);
+        border-color: var(--yellow-border);
+      }
+      .env-yellow::before {
+        background: var(--yellow);
+      }
+      .env-yellow .env-name {
+        color: var(--yellow);
+      }
+      .env-yellow .env-behavior {
+        background: var(--yellow-dim);
+        color: var(--yellow);
+        border: 1px solid var(--yellow-border);
+      }
+
+      .env-red {
+        background: var(--red-dim);
+        border-color: var(--red-border);
+      }
+      .env-red::before {
+        background: var(--red);
+      }
+      .env-red .env-name {
+        color: var(--red);
+      }
+      .env-red .env-behavior {
+        background: var(--red-dim);
+        color: var(--red);
+        border: 1px solid var(--red-border);
+      }
+
+      .env-green {
+        background: var(--green-dim);
+        border-color: var(--green-border);
+      }
+      .env-green::before {
+        background: var(--green);
+      }
+      .env-green .env-name {
+        color: var(--green);
+      }
+      .env-green .env-behavior {
+        background: var(--green-dim);
+        color: var(--green);
+        border: 1px solid var(--green-border);
+      }
+
+      .env-blue {
+        background: var(--blue-dim);
+        border-color: var(--blue-border);
+      }
+      .env-blue::before {
+        background: var(--blue);
+      }
+      .env-blue .env-name {
+        color: var(--blue);
+      }
+      .env-blue .env-behavior {
+        background: var(--blue-dim);
+        color: var(--blue);
+        border: 1px solid var(--blue-border);
+      }
+
+      /* ── VAULT FLOW DIAGRAM ── */
+      .flow {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .flow-row {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        position: relative;
+      }
+      .flow-node {
+        flex: 1;
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin: 6px;
+      }
+      .flow-node.center {
+        background: var(--orange-dim);
+        border-color: var(--orange-border);
+        flex: 0 0 200px;
+      }
+      .flow-node.blue-node {
+        background: var(--blue-dim);
+        border-color: var(--blue-border);
+      }
+      .fn-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-family: var(--mono);
+        margin-bottom: 5px;
+      }
+      .fn-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 4px;
+      }
+      .fn-desc {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .flow-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        flex-shrink: 0;
+        color: var(--subtle);
+        font-size: 18px;
+        align-self: center;
+      }
+
+      /* ── TECH STACK ── */
+      .stack-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+        gap: 8px;
+      }
+      .stack-card {
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        border-radius: 9px;
+        padding: 14px 16px;
+      }
+      .stack-cat {
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--subtle);
+        margin-bottom: 4px;
+      }
+      .stack-val {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      /* ── HIGHLIGHTS ── */
+      .highlights {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+      }
+      .hl-card {
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        border-radius: 10px;
+        padding: 20px;
+      }
+      .hl-icon {
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+      .hl-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .hl-desc {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 3rem 2rem;
+        background: var(--surface);
+      }
+      .footer-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+      }
+      .footer-meta {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .footer-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+      }
+      .footer-tags {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .footer-tag {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--muted);
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        padding: 3px 9px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <div class="nav-inner">
+        <div class="nav-logo">
+          <div class="nav-logo-mark">V</div>
+          Vault
+        </div>
+        <div class="nav-links">
+          <a href="#concept" class="nav-link">Concept</a>
+          <a href="#envelopes" class="nav-link">Envelopes</a>
+          <a href="#stack" class="nav-link">Stack</a>
+          <a
+            href="https://money-puce-ten.vercel.app/"
+            target="_blank"
+            class="nav-demo"
+            >Live demo →</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <div class="page">
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-dot"></div>
+          Personal Finance Engine
+        </div>
+        <h1>Your money,<br /><em>color-coded.</em></h1>
+        <p class="hero-sub">
+          Vault is a budgeting app where every spending category has a
+          personality. Money lives in a Main Vault and routes into smart
+          envelopes — each one behaving differently when you overspend or save.
+        </p>
+        <div class="hero-actions">
+          <a
+            href="https://money-puce-ten.vercel.app/"
+            target="_blank"
+            class="btn-primary"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+              />
+              <polyline points="15,3 21,3 21,9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Open live app
+          </a>
+          <a href="#concept" class="btn-ghost">See how it works</a>
+        </div>
+        <div class="hero-badges">
+          <span class="hero-badge">Next.js 16</span>
+          <span class="hero-badge">TypeScript</span>
+          <span class="hero-badge">Supabase</span>
+          <span class="hero-badge">Tailwind v4</span>
+          <span class="hero-badge">Zustand</span>
+          <span class="hero-badge">TanStack Query</span>
+          <span class="hero-badge">Bun</span>
+        </div>
+      </div>
+
+      <!-- DASHBOARD SCREENSHOT -->
+      <div class="section" id="concept">
+        <div class="section-label">Overview</div>
+        <div class="section-title">One vault. Many personalities.</div>
+        <div class="section-desc">
+          The dashboard surfaces your Main Vault balance at all times — your
+          true financial safety net — alongside live bucket progress for every
+          category.
+        </div>
+
+        <!-- <div class="screen-frame">
+          <div class="screen-chrome">
+            <div class="screen-dots">
+              <span class="dot-r"></span><span class="dot-y"></span
+              ><span class="dot-g"></span>
+            </div>
+            <div class="screen-url">money-puce-ten.vercel.app / dashboard</div>
+          </div>
+          <div class="app-shell">
+            <div class="app-sidebar">
+              <div class="sidebar-brand">
+                <div class="brand-mark">V</div>
+                Vault
+              </div>
+              <div class="s-nav active">
+                <div class="s-dot" style="background: var(--orange)"></div>
+                Overview
+              </div>
+              <div class="s-nav">
+                <div class="s-dot" style="background: var(--blue)"></div>
+                Buckets
+              </div>
+              <div class="s-nav">
+                <div class="s-dot" style="background: var(--muted)"></div>
+                Transactions
+              </div>
+              <div class="s-nav">
+                <div class="s-dot" style="background: var(--muted)"></div>
+                History
+              </div>
+              <div style="flex: 1"></div>
+              <div
+                style="border-top: 1px solid var(--border); padding-top: 10px"
+              >
+                <div class="s-nav">
+                  <div class="s-dot" style="background: var(--subtle)"></div>
+                  Settings
+                </div>
+              </div>
+            </div>
+            <div class="app-content">
+              <div class="app-topbar">
+                <div>
+                  <div class="app-month">June 2025</div>
+                  <div class="app-sub">Monthly cycle · 27 days remaining</div>
+                </div>
+                <div class="log-btn">+ Log expense</div>
+              </div>
+              <div class="vault-cards">
+                <div class="vc main">
+                  <div class="vc-label">Main Vault</div>
+                  <div class="vc-amount">$3,240.00</div>
+                  <div class="vc-note">Your safety net · always visible</div>
+                </div>
+                <div class="vc blue">
+                  <div class="vc-label">Blue Vault</div>
+                  <div class="vc-amount">$820.50</div>
+                  <div class="vc-note">Isolated goals surplus</div>
+                </div>
+              </div>
+              <div class="buckets">
+                <div class="brow">
+                  <div class="bdot" style="background: var(--red)"></div>
+                  <div class="bname">Groceries</div>
+                  <div class="btrack">
+                    <div
+                      class="bfill"
+                      style="width: 72%; background: var(--red)"
+                    ></div>
+                  </div>
+                  <div class="bamt">$288 / $400</div>
+                </div>
+                <div class="brow">
+                  <div class="bdot" style="background: var(--yellow)"></div>
+                  <div class="bname">Transport</div>
+                  <div class="btrack">
+                    <div
+                      class="bfill"
+                      style="width: 40%; background: var(--yellow)"
+                    ></div>
+                  </div>
+                  <div class="bamt">$60 / $150</div>
+                </div>
+                <div class="brow">
+                  <div class="bdot" style="background: var(--blue)"></div>
+                  <div class="bname">Emergency Fund</div>
+                  <div class="btrack">
+                    <div
+                      class="bfill"
+                      style="width: 55%; background: var(--blue)"
+                    ></div>
+                  </div>
+                  <div class="bamt">$275 / $500</div>
+                </div>
+                <div class="brow">
+                  <div class="bdot" style="background: var(--orange)"></div>
+                  <div class="bname">Unexpected</div>
+                  <div class="btrack">
+                    <div
+                      class="bfill"
+                      style="width: 0%; background: var(--orange)"
+                    ></div>
+                  </div>
+                  <div class="bamt">$0 · reactive</div>
+                </div>
+                <div class="brow">
+                  <div class="bdot" style="background: var(--green)"></div>
+                  <div class="bname">Personal spending</div>
+                  <div class="btrack">
+                    <div
+                      class="bfill"
+                      style="width: 28%; background: var(--green)"
+                    ></div>
+                  </div>
+                  <div class="bamt">$42 / $150</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-caption">
+          Dashboard — Main Vault, Blue Vault, and live bucket progress
+        </div> -->
+      </div>
+
+      <!-- TRANSACTIONS SCREENSHOT -->
+      <div class="section">
+        <div class="section-label">Transactions</div>
+        <div class="section-title">
+          Every expense knows<br /><em>where it came from.</em>
+        </div>
+        <div class="section-desc">
+          Each transaction is tagged with its envelope color. The app shows live
+          routing feedback — whether the spend pulled from the Main Vault, drew
+          from the Blue Vault, or stayed quietly in your pocket.
+        </div>
+
+        <!-- <div class="screen-frame">
+          <div class="screen-chrome">
+            <div class="screen-dots">
+              <span class="dot-r"></span><span class="dot-y"></span
+              ><span class="dot-g"></span>
+            </div>
+            <div class="screen-url">
+              money-puce-ten.vercel.app / transactions
+            </div>
+          </div>
+          <div>
+            <div class="tx-header">
+              <div class="tx-title">June 2025 — transactions</div>
+              <div class="tx-actions">
+                <div class="tx-btn ghost">Filter</div>
+                <div class="tx-btn accent">+ Add</div>
+              </div>
+            </div>
+            <div class="tx-row">
+              <div class="tx-icon" style="background: var(--red-dim)">🛒</div>
+              <div class="tx-info">
+                <div class="tx-name">Whole Foods Market</div>
+                <div class="tx-meta">Jun 3 · Groceries · stayed in pocket</div>
+              </div>
+              <div class="tx-right">
+                <div
+                  class="tx-pill"
+                  style="
+                    background: var(--red-dim);
+                    color: var(--red);
+                    border: 1px solid var(--red-border);
+                  "
+                >
+                  RED
+                </div>
+                <div class="tx-amt" style="color: var(--red)">−$84.20</div>
+              </div>
+            </div>
+            <div class="tx-row">
+              <div class="tx-icon" style="background: var(--orange-dim)">
+                🔧
+              </div>
+              <div class="tx-info">
+                <div class="tx-name">Car repair</div>
+                <div class="tx-meta">
+                  Jun 2 · Unexpected · pulled from Main Vault
+                </div>
+              </div>
+              <div class="tx-right">
+                <div
+                  class="tx-pill"
+                  style="
+                    background: var(--orange-dim);
+                    color: var(--orange);
+                    border: 1px solid var(--orange-border);
+                  "
+                >
+                  ORANGE
+                </div>
+                <div class="tx-amt" style="color: var(--orange)">−$212.00</div>
+              </div>
+            </div>
+            <div class="tx-row">
+              <div class="tx-icon" style="background: var(--yellow-dim)">
+                🚌
+              </div>
+              <div class="tx-info">
+                <div class="tx-name">Monthly transit pass</div>
+                <div class="tx-meta">
+                  Jun 1 · Transport · surplus sweeps to Main Vault
+                </div>
+              </div>
+              <div class="tx-right">
+                <div
+                  class="tx-pill"
+                  style="
+                    background: var(--yellow-dim);
+                    color: var(--yellow);
+                    border: 1px solid var(--yellow-border);
+                  "
+                >
+                  YELLOW
+                </div>
+                <div class="tx-amt" style="color: var(--yellow)">−$60.00</div>
+              </div>
+            </div>
+            <div class="tx-row">
+              <div class="tx-icon" style="background: var(--blue-dim)">🎯</div>
+              <div class="tx-info">
+                <div class="tx-name">Emergency fund deposit</div>
+                <div class="tx-meta">
+                  Jun 1 · Blue Vault +$55 surplus accumulated
+                </div>
+              </div>
+              <div class="tx-right">
+                <div
+                  class="tx-pill"
+                  style="
+                    background: var(--blue-dim);
+                    color: var(--blue);
+                    border: 1px solid var(--blue-border);
+                  "
+                >
+                  BLUE
+                </div>
+                <div class="tx-amt" style="color: var(--blue)">−$220.00</div>
+              </div>
+            </div>
+            <div class="tx-row">
+              <div class="tx-icon" style="background: var(--green-dim)">☕</div>
+              <div class="tx-info">
+                <div class="tx-name">Starbucks</div>
+                <div class="tx-meta">
+                  Jun 3 · Personal spending · stays in pocket
+                </div>
+              </div>
+              <div class="tx-right">
+                <div
+                  class="tx-pill"
+                  style="
+                    background: var(--green-dim);
+                    color: var(--green);
+                    border: 1px solid var(--green-border);
+                  "
+                >
+                  GREEN
+                </div>
+                <div class="tx-amt" style="color: var(--green)">−$6.50</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-caption">
+          Transaction log — color-tagged entries with live vault routing notes
+        </div> -->
+      </div>
+
+      <!-- ENVELOPES -->
+      <div class="section" id="envelopes">
+        <div class="section-label">The core idea</div>
+        <div class="section-title">
+          Five colors.<br /><em>Five behaviors.</em>
+        </div>
+        <div class="section-desc">
+          Most budget apps treat every category the same. Vault doesn't. Each
+          envelope color defines a distinct financial personality — how it
+          handles savings, overspending, and month-end rollover.
+        </div>
+
+        <div class="env-grid">
+          <div class="env-card env-orange">
+            <div class="env-top">
+              <div class="env-swatch" style="background: var(--orange)"></div>
+              <div class="env-name">Orange</div>
+            </div>
+            <div class="env-behavior">Reactive</div>
+            <div class="env-desc">
+              No pre-set budget. Pulls directly from the Main Vault as you
+              spend. Zero pre-planning required — built for truly unexpected
+              costs.
+            </div>
+          </div>
+          <div class="env-card env-yellow">
+            <div class="env-top">
+              <div class="env-swatch" style="background: var(--yellow)"></div>
+              <div class="env-name">Yellow</div>
+            </div>
+            <div class="env-behavior">Fluid</div>
+            <div class="env-desc">
+              Set a budget. Overspend? Main Vault covers it. Underspend? Savings
+              sweep back to Main Vault at month end. Fully bidirectional.
+            </div>
+          </div>
+          <div class="env-card env-red">
+            <div class="env-top">
+              <div class="env-swatch" style="background: var(--red)"></div>
+              <div class="env-name">Red</div>
+            </div>
+            <div class="env-behavior">Pocket money</div>
+            <div class="env-desc">
+              Underspend stays yours — the app never reclaims it. Overspend
+              pulls from Main Vault. One of two pocket money colors.
+            </div>
+          </div>
+          <div class="env-card env-green">
+            <div class="env-top">
+              <div class="env-swatch" style="background: var(--green)"></div>
+              <div class="env-name">Green</div>
+            </div>
+            <div class="env-behavior">Investment</div>
+            <div class="env-desc">
+              Identical logic to Red. A Investment point of view color base so
+              you can track two distinct types of discretionary spending
+              separately.
+            </div>
+          </div>
+          <div class="env-card env-blue">
+            <div class="env-top">
+              <div class="env-swatch" style="background: var(--blue)"></div>
+              <div class="env-name">Blue</div>
+            </div>
+            <div class="env-behavior">Isolated goal</div>
+            <div class="env-desc">
+              Self-contained sinking fund. Surplus builds a private Blue Vault.
+              Overspend draws from it only. Hard-blocked if the Blue Vault runs
+              dry — the Main Vault is never touched.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HIGHLIGHTS -->
+      <div class="section">
+        <div class="section-label">Engineering decisions</div>
+        <div class="section-title">
+          Built to be<br /><em>financially precise.</em>
+        </div>
+        <div class="section-desc">
+          Key architectural choices that make the app reliable, not just
+          functional.
+        </div>
+
+        <div class="highlights">
+          <div class="hl-card">
+            <div class="hl-icon">🔒</div>
+            <div class="hl-title">Immutable history</div>
+            <div class="hl-desc">
+              Past months are locked by default. Historical vault balances can
+              never drift — every figure is a reliable audit trail.
+            </div>
+          </div>
+          <div class="hl-card">
+            <div class="hl-icon">⛔</div>
+            <div class="hl-title">Blue Vault hard stop</div>
+            <div class="hl-desc">
+              Blue bucket overspend is blocked entirely if the Blue Vault is
+              empty. No partial writes. No silent Main Vault drain.
+            </div>
+          </div>
+          <div class="hl-card">
+            <div class="hl-icon">♻️</div>
+            <div class="hl-title">Month-end sweep logic</div>
+            <div class="hl-desc">
+              Yellow surpluses auto-return to Main Vault. Blue surpluses
+              accumulate privately. Each color has deterministic close-of-month
+              behavior.
+            </div>
+          </div>
+          <div class="hl-card">
+            <div class="hl-icon">👁️</div>
+            <div class="hl-title">Always-visible safety net</div>
+            <div class="hl-desc">
+              The Main Vault balance is surfaced prominently at all times — so
+              you always know your real financial floor, not just per-category
+              numbers.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TECH STACK -->
+      <div class="section" id="stack">
+        <div class="section-label">Tech stack</div>
+        <div class="section-title">
+          Modern, typed,<br /><em>production-ready.</em>
+        </div>
+        <div class="section-desc">
+          Built on the current Next.js App Router with a fully typed TypeScript
+          codebase, Supabase for real-time Postgres, and Bun as the runtime.
+        </div>
+
+        <div class="stack-grid">
+          <div class="stack-card">
+            <div class="stack-cat">Framework</div>
+            <div class="stack-val">Next.js 16</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Language</div>
+            <div class="stack-val">TypeScript</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Styling</div>
+            <div class="stack-val">Tailwind CSS v4</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Components</div>
+            <div class="stack-val">Radix UI</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Icons</div>
+            <div class="stack-val">Lucide + Tabler</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">State</div>
+            <div class="stack-val">Zustand</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Server state</div>
+            <div class="stack-val">TanStack Query</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Backend / DB</div>
+            <div class="stack-val">Supabase</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Auth</div>
+            <div class="stack-val">Supabase Auth</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Notifications</div>
+            <div class="stack-val">Sonner</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Runtime</div>
+            <div class="stack-val">Bun</div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-cat">Deployment</div>
+            <div class="stack-val">Vercel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <!-- <footer>
+      <div class="footer-inner">
+        <div>
+          <div class="footer-brand">
+            <div class="nav-logo-mark">V</div>
+            Vault
+          </div>
+          <div class="footer-meta">
+            A color-coded personal finance engine · MIT License
+          </div>
+        </div>
+        <div class="footer-right">
+          <a
+            href="https://money-puce-ten.vercel.app/"
+            target="_blank"
+            class="btn-primary"
+            style="font-size: 12.5px; padding: 8px 16px"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              style="width: 13px; height: 13px"
+            >
+              <path
+                d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+              />
+              <polyline points="15,3 21,3 21,9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+            Open live app
+          </a>
+          <div class="footer-tags">
+            <span class="footer-tag">Next.js 16</span>
+            <span class="footer-tag">Supabase</span>
+            <span class="footer-tag">TypeScript</span>
+            <span class="footer-tag">Bun</span>
+          </div>
+        </div>
+      </div>
+    </footer> -->
+  </body>
+</html>

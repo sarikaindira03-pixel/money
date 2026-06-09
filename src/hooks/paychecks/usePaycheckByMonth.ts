@@ -5,5 +5,5 @@ import { usePaychecksQuery } from "./usePaychecksQuery";
 export const usePaycheckByMonth = (month: string) => {
   const { data, isLoading } = usePaychecksQuery();
   const record = data?.find((p) => p.month === month);
-  return { salary: record?.salary ?? 0, isLoading };
+  return { salary: record?.total_income ?? 0, isLoading };
 };

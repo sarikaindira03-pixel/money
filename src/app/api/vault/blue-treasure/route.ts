@@ -3,16 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { badRequest } from "@/src/lib/response";
 import { handleProcedureError } from "@/src/lib/apiResponse";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { head_user_id } from "@/src/lib/server-config";
+import supabase from "@/src/lib/supabase/postgrest";
 
 export async function GET(req: NextRequest) {
   try {
-    const headerList = await headers();
-    const userId = headerList.get("x-user-id");
+    const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");
 
     const { searchParams } = new URL(req.url);

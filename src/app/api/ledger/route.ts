@@ -1,19 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleProcedureError } from "@/src/lib/apiResponse";
 import { badRequest, created } from "@/src/lib/response";
-import { createClient } from "@supabase/supabase-js";
-import { headers } from "next/headers";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import { head_user_id } from "@/src/lib/server-config";
+import supabase from "@/src/lib/supabase/postgrest";
 
 // GET /api/ledger?bucket_id=2&month=2026-01
 export async function GET(req: NextRequest) {
   try {
-    const headerList = await headers();
-    const userId = headerList.get("x-user-id");
+    const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");
 
     const { searchParams } = new URL(req.url);
@@ -37,8 +32,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
-    const headerList = await headers();
-    const userId = headerList.get("x-user-id");
+    const userId = await head_user_id();
     if (!userId) return badRequest("Unauthorized action token context.");
 
     const { bucket_id, month, amount_spent, note, procedure, date_of_entry } =

@@ -1,19 +1,15 @@
 // File: src/app/api/bucket_configs/route.ts
-import { createClient } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { badRequest, handleProcedureError } from "@/src/lib/apiResponse"; // or your uniform response helpers
+import supabase from "@/src/lib/supabase/postgrest";
+import { head_user_id } from "@/src/lib/server-config";
 
 // Initialize the standard server-side Supabase client with the Service Role key
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
 
 export async function GET() {
   try {
-    const headerList = await headers();
-    const userId = headerList.get("x-user-id");
+    const userId = await head_user_id();
 
     if (!userId) return badRequest("Unauthorized action token context.");
 

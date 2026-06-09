@@ -8,28 +8,22 @@
 import { NextResponse } from "next/server";
 import { badRequest, created, serverError } from "../../../lib/response";
 import { handleProcedureError } from "../../../lib/apiResponse";
-import { createClient } from "@supabase/supabase-js";
-import { headers } from "next/headers";
-import { supabaseServiceKey, supabaseUrl } from "@/src/lib/config";
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+import supabase from "@/src/lib/supabase/postgrest";
+import { head_user_id } from "@/src/lib/server-config";
+
 export async function GET(req: Request) {
   const month = new URL(req.url).searchParams.get("month");
 
   try {
-    const headerList = await headers();
-    const userId = headerList.get("x-user-id");
+    const userId = await head_user_id();
 
     if (!userId) {
       return badRequest("Unauthorized");
     }
-
     let query = supabase
-      .from("paychecks")
+      .from("v_paychecks")
       .select("*")
-      .eq("user_id", userId) // ✅ filter by user
+      .eq("user_id", userId)
       .order("month", { ascending: false });
 
     if (month) {
@@ -41,7 +35,7 @@ export async function GET(req: Request) {
     if (error) throw error;
 
     if (month) {
-      return NextResponse.json(data?.[0] ?? { salary: 0 });
+      return NextResponse.json(data?.[0] ?? { total_income: 0 });
     }
 
     return NextResponse.json({ data });
@@ -50,22 +44,20 @@ export async function GET(req: Request) {
   }
 }
 export async function POST(req: Request) {
-  const supabase = createClient(supabaseUrl(), supabaseServiceKey());
-
   try {
     // 1. Read the user ID straight out of the verified proxy headers
-    const headerList = await headers();
-    const userId = headerList.get("x-user-id");
+
+    const userId = await head_user_id();
 
     if (!userId) {
       return badRequest("Unauthorized action token context.");
     }
-    const { month, salary } = await req.json();
-    if (!userId || !month || !salary) return badRequest("Missing fields");
+    const { month, total_income } = await req.json();
+    if (!userId || !month || !total_income) return badRequest("Missing fields");
     const { error } = await supabase.rpc("record_paycheck", {
       p_user_id: userId,
       p_month: month,
-      p_salary: Number(salary),
+      p_total_income: Number(total_income),
     });
     if (error) throw error;
     return created({ message: "Paycheck recorded." });
@@ -73,7 +65,7 @@ export async function POST(req: Request) {
     console.error("❌ Error name:", e.name);
     console.error("❌ Error message:", e.message);
     console.error("❌ Error code:", e.pgCode);
-    console.error("❌ Full error:", e);
+    console.error("❌ Full error paycheck:", e);
     return handleProcedureError(e);
   }
 }

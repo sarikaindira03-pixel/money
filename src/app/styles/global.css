@@ -598,4 +598,81 @@ textarea {
   color: var(--over);
 }
 
-/* Ledger Records */
+/* Accordina for Month view */
+.accordion-panel {
+  padding: 12px 16px 16px;
+  background: var(--color-background-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.income-entry-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap; /* wraps to next line if too many entries */
+  gap: 6px;
+}
+.income-entry-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.income-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 0.5px solid var(--yellow);
+}
+
+.income-entry-source {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.income-entry-amount {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text2);
+}
+
+.income-entry-remove {
+  font-size: 10px;
+  color: var(--red);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding-left: 0;
+  line-height: 1;
+}
+
+.income-entry-remove:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.add-income-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 0.5px solid var(--color-border-tertiary);
+}
+
+.add-income-form input {
+  flex: 1;
+}
+
+.add-income-form button {
+  white-space: nowrap;
+}
+
+.add-income-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

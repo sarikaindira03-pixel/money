@@ -22,7 +22,7 @@ export interface BucketMeta {
   rule: string;
 }
 export interface MonthlyBudgetBucket {
-  allocated: number;
+  original_allocated: number;
   bucket_id: number;
   bucket_name: string;
   display_type: BucketType;
@@ -59,8 +59,9 @@ export interface BucketConfig {
 
 export interface Paycheck {
   user_id: string;
-  salary: number;
+  total_income: number;
   month: string;
+  is_month_open: boolean;
 }
 
 export interface MonthlyEntry {
@@ -188,4 +189,15 @@ export type AllocateBudgetRequest = {
   amount: number;
   month: string;
   note?: string;
+};
+export type RemoveAllocateBudgetRequest = {
+  bucket_id: number;
+  month: string;
+};
+
+export type income_entry_Request = {
+  procedure: string;
+  month: string;
+  source_name: string;
+  amount?: number ;
 };
