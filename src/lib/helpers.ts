@@ -97,7 +97,7 @@ export const buildThreadSteps = (
   navigation: NavState,
   bc: BucketConfig | undefined,
 ): ThreadStep[] => {
-  const steps: ThreadStep[] = [{ label: "YEARS", go: "year" }];
+  const steps: ThreadStep[] = [{ label: "Home", go: "year" }];
 
   if (navigation.year)
     steps.push({ label: navigation.year.toString(), go: "month" });

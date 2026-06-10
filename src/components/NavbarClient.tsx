@@ -7,7 +7,6 @@ import { create_client } from "../lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export function NavbarClient() {
-  // const setNavigation = useNavigation((s) => s.setNavigation);
   const { data } = useLockerQuery();
 
   const router = useRouter();
@@ -20,23 +19,19 @@ export function NavbarClient() {
   };
   return (
     <div className="nav-bar">
-      <div className="nav-title" onClick={() => router.push("/")}>
-        Bill Book
-      </div>
+      <div className="nav-title">Bill Book</div>
       <div className="nav-right">
         <NavButton
-          className="cursor-not-allowed"
+          className="cursor-not-allowed ml-1"
           variant={vb > 0 ? "yellow" : "ghost"}
-          // onClick={() => setNavigation({ screen: "vault" })}
         >
           Vault {fmt(vb)}
         </NavButton>
         <NavButton
           className="cursor-not-allowed"
           variant={bvb > 0 ? "blue" : "ghost"}
-          // onClick={() => setNavigation({ screen: "blueboxes" })}
         >
-          Blue Boxes {fmt(bvb)}
+          Blue Vault{fmt(bvb)}
         </NavButton>
         <NavButton variant="danger" onClick={handleLogout}>
           Logout

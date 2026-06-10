@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import useNavigationStore from "../../store/zustand";
 import { MonthlyBudgetBucket } from "../../types/data";
 import { year_num } from "../../lib/formats";
-import { useQueryClient } from "@tanstack/react-query";
 import { useRemoveAllocateBudget } from "@/src/hooks/budgets/useRemoveAllocateBudget";
 
 const BudgetLedger = ({
@@ -17,7 +16,6 @@ const BudgetLedger = ({
   fmt: (n: number) => string;
 }) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const setNavigation = useNavigationStore((state) => state.setNavigation);
 
   const [deletingId, setDeletingId] = useState<number | null>(null);

@@ -4,6 +4,7 @@ import { usePaychecksQuery } from "../../hooks/paychecks/usePaychecksQuery";
 import useNavigationStore from "../../store/zustand";
 import { YearItem } from "../../components/features/YearSelector/YearItem";
 import { YearForm } from "../../components/features/YearSelector/YearForm";
+import { ROUTES } from "@/src/utils/constants";
 
 const YearView = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const YearView = () => {
 
   const handleYearClick = (year: string) => {
     setNavigation({ screen: "month", year });
-    router.push(`/month/${year}`);
+    router.push(`${ROUTES.month}/${year}`);
   };
 
   return (
@@ -40,9 +41,6 @@ const YearView = () => {
         {hasTrackedYears ? (
           <>
             <div className="lv-tag">Pick a Year</div>
-            <div className="lv-sub">
-              {years.length} year{years.length !== 1 && "s"} tracked
-            </div>
           </>
         ) : (
           <h1 className="lv-h1">No Records Yet, Please Enter a paycheck</h1>

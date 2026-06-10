@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  allowedDevOrigins: ["*.ngrok-free.dev", "*.ngrok.io"],
   images: {
     remotePatterns: [{ hostname: "example.com" }],
   },

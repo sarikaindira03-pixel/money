@@ -58,7 +58,7 @@ export const YearForm = () => {
     return (
       <div className="brow" style={{ marginTop: 20 }}>
         <button className="btn btn-w" onClick={() => setIsAdding(true)}>
-          + New Entry
+          New Entry
         </button>
       </div>
     );

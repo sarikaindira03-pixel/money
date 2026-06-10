@@ -29,7 +29,6 @@ const sizeClasses: Record<ButtonSize, string> = {
   md: "",
   lg: "btn-lg",
 };
-
 const NavButton = ({
   variant = "ghost",
   size = "sm",
@@ -38,17 +37,16 @@ const NavButton = ({
   children,
   ...rest
 }: NavButtonProps) => {
-  const isGhost = disabled || variant === "ghost";
   const buttonClass = clsx(
     "btn",
     variantClasses[variant],
     sizeClasses[size],
-    isGhost && "opacity-50 pointer-events-none",
+    disabled && "opacity-40 pointer-events-none cursor-not-allowed",
     className,
   );
 
   return (
-    <button className={buttonClass} disabled={isGhost} {...rest}>
+    <button className={buttonClass} disabled={disabled} {...rest}>
       {children}
     </button>
   );

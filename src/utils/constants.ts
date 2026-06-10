@@ -58,6 +58,10 @@ export const dead_user_id = "a240aa31-9303-41d1-9caf-a3389dedfd99";
 // indira
 // export const dead_user_id = "daf84b18-b04f-4541-8326-d09ba41e7cf0";
 export const BASE_URL = "/api";
+
+export const ROUTES = {
+  month: "/month",
+};
 export const API_ENDPOINTS = {
   income_entries: "income_entries",
   paychecks: "paychecks",

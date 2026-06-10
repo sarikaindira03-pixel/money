@@ -60,8 +60,6 @@ const HomeApp = () => {
     [navigation, router, setNavigation],
   );
 
-  if (navigation.screen === "year") return null;
-
   return <Thread steps={steps} onJump={jump} />;
 };
 

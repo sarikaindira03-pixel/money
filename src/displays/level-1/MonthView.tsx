@@ -360,7 +360,7 @@ const MonthRow = ({
             <div className="add-income-form">
               <input
                 type="text"
-                placeholder="Source name (e.g. Freelance, Bonus)"
+                placeholder="Source name"
                 value={form.sourceName}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, sourceName: e.target.value }))
@@ -383,9 +383,10 @@ const MonthRow = ({
               <button
                 onClick={handleSubmit}
                 disabled={form.submitting}
+                className="btn"
                 style={{ cursor: "pointer", whiteSpace: "nowrap" }}
               >
-                {form.submitting ? "Adding…" : "+  income"}
+                {form.submitting ? "Adding…" : "Add Income"}
               </button>
             </div>
           )}
