@@ -54,11 +54,6 @@ Two vaults run in parallel: the **Main Vault** (your safety net, always visible)
 
 # Vault — Database ERD
 
-PostgreSQL / Supabase schema for the **vault** personal-finance app (`public` schema).
-This file renders automatically on GitHub/GitLab — no image asset to keep in sync.
-A static image version (`vault_erd.svg` / `vault_erd.png`) is also included for use
-outside of git (blog posts, slides, etc).
-
 ```mermaid
 erDiagram
     USERS {
