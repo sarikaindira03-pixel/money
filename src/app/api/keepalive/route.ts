@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/`,
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/v_paychecks?select=user_id&limit=1`,
       {
         headers: {
           apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
